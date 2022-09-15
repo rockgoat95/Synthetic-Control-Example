@@ -1,2 +1,2 @@
 # DnF-job-analysis
-Causal Inference for the balance update
+Causal Inference for the update of the job balance.
