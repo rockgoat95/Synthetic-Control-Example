@@ -18,7 +18,7 @@ import numpy as np
 
 from utils import get_chracter_creation_date, create_continuous_time
 
-api_key_val = 'ZOwcEhhjZbOmV1zLvNKLhYYBTLZy2JjL'
+api_key_val = ''
 
 api_url = 'https://api.neople.co.kr/df/'
 
