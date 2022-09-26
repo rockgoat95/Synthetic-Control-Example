@@ -7,9 +7,12 @@ import time
 import re
 import pickle
 import os
-from copy import deepcopy
 
-os.chdir('C:/Neople_Anal/')
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from copy import deepcopy
 
 import tqdm
 import datetime 
@@ -18,7 +21,7 @@ import numpy as np
 
 from utils import get_chracter_creation_date, create_continuous_time
 
-api_key_val = 'ZOwcEhhjZbOmV1zLvNKLhYYBTLZy2JjL'
+api_key_val = os.environ.get("API_KEY")
 
 api_url = 'https://api.neople.co.kr/df/'
 
