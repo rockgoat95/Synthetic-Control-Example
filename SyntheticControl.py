@@ -61,7 +61,7 @@ class SyntheticControl:
         self._scaling()
         self.M0, self.M1 = self._denoising(k)
         if eta == "Auto":
-            opt_eta = self._chaining(method = 'l1')
+            opt_eta = self._forward_chain_CV(method = 'l1')
             lasso = Lasso(alpha = opt_eta, 
                         fit_intercept = False,
                         max_iter = 2000,
@@ -86,7 +86,7 @@ class SyntheticControl:
         self._scaling()
         self.M0, self.M1 = self._denoising(k)
         if eta == "Auto":
-            opt_eta = self._chaining(method = 'l2')
+            opt_eta = self._forward_chain_CV(method = 'l2')
             ridge = Ridge(alpha = opt_eta, 
                         fit_intercept = False,
                         max_iter = 2000,
@@ -150,7 +150,7 @@ class SyntheticControl:
         return
     
     
-    def _chaining(self, method):
+    def _forward_chain_CV(self, method):
         
         n = len(self.M0)
         max_eta = max(self.M0.T.dot(self.y0))
