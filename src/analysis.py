@@ -4,11 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 data = pd.read_csv('DAT/job_pivot_table.csv').set_index('create_week')
-T0 = 202221
+T0 = 202219
 col = "마법사(여)_소환사"
 
-sc_model = SyntheticControl(data0 = data.loc[data.index<T0,:],
-                            data1 = data.loc[data.index>=T0,:],
+sc_model = SyntheticControl(data0 = data.loc[data.index<=T0,:],
+                            data1 = data.loc[data.index>T0,:],
                             col = col,
                             method = 'linear')
 
@@ -31,6 +31,9 @@ def synthetic_plot(x, y, s_y, v_idx, label = ""):
     plt.show()
     return 
 
-synthetic_plot(data.index, data[col], np.concatenate((sc_y0, sc_y1)) , v_idx = T0-0.5, label = "소환사의 주간 캐릭터 생성")
+synthetic_plot(data.index, data[col], np.concatenate((sc_y0, sc_y1)) , v_idx = T0, label = "소환사의 주간 캐릭터 생성")
 
-synthetic_plot(data.index, data[col], np.concatenate((rsc_y0, rsc_y1)) , v_idx = T0-0.5, label = "소환사의 주간 캐릭터 생성")
+synthetic_plot(data.index, data[col], np.concatenate((rsc_y0, rsc_y1)) , v_idx = T0, label = "소환사의 주간 캐릭터 생성")
+
+
+## bootstrap 결과를 통한 검정 추가 

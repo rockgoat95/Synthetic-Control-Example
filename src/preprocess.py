@@ -7,6 +7,10 @@ import datetime
 
 path = "DAT/chr_info"
 
+T0_before = 8
+T0_after = 3
+T0 = 202219 # Treament
+
 data_list = []
 
 def get_update_week(x):
@@ -37,9 +41,6 @@ for file_name in os.listdir(path):
 data = pd.concat(data_list, axis=0)
 job_names = [name[:-5] for name in os.listdir(path)]
 unable_to_get = [job_names[i] for i in range(len(job_names))  if len(data_list[i]) == 0 ]
-for dat in data_list[]:
-    print(len(dat))
-
 
 # get_update_week(datetime.datetime.strptime('2022-05-25', "%Y-%m-%d"))
 
@@ -47,9 +48,8 @@ for dat in data_list[]:
 # 2022년 21번째 주에 소환사와 스트리트파이터 (여) 리뉴얼되었슴. 
 # 4주간
 
-T0 = 202221 # Treament
 
-data = data.loc[(data['create_week'] >= (T0-8)) & (data['create_week'] < (T0+5)), :]
+data = data.loc[(data['create_week'] >= (T0-T0_before)) & (data['create_week'] < (T0+T0_after)), :]
 data['job'] = data['job'].str.replace("眞 ","")
 
 data = data.pivot_table(index = ['create_week'], columns = 'job', values = 'size')
