@@ -1,3 +1,4 @@
 .env
 DAT/
 test.ipynb
+__pycache__/
