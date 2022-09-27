@@ -1,11 +1,8 @@
-from msilib.schema import Error
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import Lasso, Ridge
-from typing import List
-from operator import add
-from toolz import reduce, partial
+from toolz import partial
 from scipy.optimize import fmin_slsqp
 import random
 
@@ -23,24 +20,22 @@ class SyntheticControl:
         if self.method in ['robust_l1', 'robust_l2']:
             self._scaling
         
-    def get(self, k = 3):
+    def get(self, k = 3, eta = 'Auto'):
         
         if self.method == 'linear':
-            self.W = self._linear_control()
-            synthetic_y = np.asarray(self.X1).dot(self.W)
+            synthetic_y0, synthetic_y1 = self._linear_control()
+            return synthetic_y0, synthetic_y1
+            
         elif self.method == 'robust_l1':
-            self.W = self._robust_l1_control(k)
-            synthetic_y = np.asarray(self.M1).dot(self.W)
-            synthetic_y= self._inv_scaling(synthetic_y)
+            synthetic_y0, synthetic_y1 = self._robust_l1_control(k, eta)
+            return synthetic_y0, synthetic_y1
+            
         elif self.method == 'robust_l2':
-            self.W = self._robust_l2_control(k)
-            synthetic_y = np.asarray(self.M1).dot(self.W)
-            synthetic_y= self._inv_scaling(synthetic_y)
-            pass
+            synthetic_y0, synthetic_y1= self._robust_l2_control(k, eta)
+            return synthetic_y0, synthetic_y1
         else:
-            raise Error("Only 'linear', 'robust_l1', 'robust_l2' are available.")
+            raise Exception("Only 'linear', 'robust_l1', 'robust_l2' are available.")
         
-        return synthetic_y
         
     def _linear_control(self):
         
@@ -54,7 +49,12 @@ class SyntheticControl:
                             f_eqcons=lambda x: np.sum(x) - 1,
                             bounds=[(0.0, 1.0)]*len(w_start),
                             disp=False)
-        return weights
+        
+        self.W = weights
+        synthetic_y0 = np.asarray(self.X0).dot(self.W)
+        synthetic_y1 = np.asarray(self.X1).dot(self.W)
+        
+        return synthetic_y0, synthetic_y1    
     
     def _robust_l1_control(self, k, eta = "Auto"):
         
@@ -74,7 +74,12 @@ class SyntheticControl:
                         )
             lasso.fit(self.M0, self.y0)
             
-        return np.array(lasso.coef_)
+        self.W = np.array(lasso.coef_)
+        synthetic_y0 = np.asarray(self.M0).dot(self.W) * self.s + self.m
+        synthetic_y1 = np.asarray(self.M1).dot(self.W) * self.s + self.m
+        self._inv_scaling()
+        
+        return synthetic_y0, synthetic_y1    
     
     def _robust_l2_control(self, k, eta = "Auto"):
         
@@ -94,7 +99,12 @@ class SyntheticControl:
                         )
             ridge.fit(self.M0, self.y0)
             
-        return np.array(ridge.coef_)
+        self.W = np.array(ridge.coef_)
+        synthetic_y0 = np.asarray(self.M0).dot(self.W) * self.s + self.m
+        synthetic_y1 = np.asarray(self.M1).dot(self.W) * self.s + self.m
+        self._inv_scaling()
+        
+        return synthetic_y0, synthetic_y1
     
     def _denoising(self,k):
         u, s, v = np.linalg.svd(pd.concat([self.X0, self.X1], axis = 0))
@@ -131,24 +141,24 @@ class SyntheticControl:
         
         return
     
-    def _inv_scaling(self, data):
-        try :
-            self.m
-            self.s
-        except:
-            NameError("Scaling method is not applied.")
-        return data * self.s + self.m
+    def _inv_scaling(self):
+        self.X0 = self.X0 * self.s + self.m
+        self.X1 = self.X1 * self.s + self.m
+        self.y0 = self.y0 * self.s + self.m
+        self.y1 = self.y1 * self.s + self.m
+        
+        return
     
     
     def _chaining(self, method):
         
         n = len(self.M0)
-        max_eta = max(self.M0.T.dot(self.y))
+        max_eta = max(self.M0.T.dot(self.y0))
         candidate_eta = [10**i for i in range(-2, 10)]
         candidate_eta = [eta for eta in candidate_eta if eta <max_eta]
         
         train_X = self.M0[:(n-1), :].copy()
-        train_y = self.y0.iloc[:(n-1)].copy()
+        train_y = self.y0.iloc[:(n-1)].values.copy()
         
         valid_X = self.M0[-1:,:].copy()
         valid_y = self.y0.iloc[-1].copy()
@@ -174,7 +184,7 @@ class SyntheticControl:
                             )
             loss = []
             for i in range(5):
-                model.fit(train_X[cv_idx, :], train_y[cv_idx])
+                model.fit(train_X[cv_idx[i], :], train_y[cv_idx[i]])
                 
                 loss.append((model.predict(valid_X)[0] - valid_y)**2)
             if np.mean(loss) < min_loss:

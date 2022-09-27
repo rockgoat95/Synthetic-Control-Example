@@ -9,7 +9,6 @@ path = "DAT/chr_info"
 
 data_list = []
 
-
 def get_update_week(x):
     res = x - datetime.timedelta(days=2)
     res = list(res.date().isocalendar())
@@ -43,8 +42,6 @@ for dat in data_list[]:
 
 
 # get_update_week(datetime.datetime.strptime('2022-05-25', "%Y-%m-%d"))
-
-# get_update_week(datetime.datetime.strptime('2022-03-29', "%Y-%m-%d"))
 
 # 이전 8주간 이용 
 # 2022년 21번째 주에 소환사와 스트리트파이터 (여) 리뉴얼되었슴. 
