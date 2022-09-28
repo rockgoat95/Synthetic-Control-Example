@@ -13,7 +13,7 @@ MSE_threshold = 80
 treated_jobs = ["마법사(여)_소환사", "도적_쿠노이치"]
 
 donor_pool = [job for job in data.columns if job not in treated_jobs]
-
+empirical_pvs = []
 for i in range(len(treated_jobs)):
 
     treated = treated_jobs[i]
@@ -81,5 +81,5 @@ for i in range(len(treated_jobs)):
 
     after_treated = pd.Series(after_treated)
     after_treated.index = after_treated_names
-    empirical_pv = np.mean(after_treated >= after_treated[treated]) 
+    empirical_pvs.append(np.mean(after_treated >= after_treated[treated]) )
     ## bootstrap 결과를 통한 검정 추가 
