@@ -52,50 +52,51 @@ for i in range(len(base_job_list)):
         if "none" not in x["style"]
     ]
 
-
-job_url = (
-    "https://dundam.xyz/damage_ranking?page=1&type=7&job="
-    + job
-    + "&baseJob="
-    + base_job
-    + "&weaponType=%EC%A0%84%EC%B2%B4&weaponDetail=%EC%A0%84%EC%B2%B4"
-)
-
-driver.get(job_url)
-
-chr_dict = {"nick_name": [], "server": []}
-stop_idx = False
-while not stop_idx:
-    for j in range(1, 11):
-        time.sleep(1)
-
-        page_src = BeautifulSoup(driver.page_source)
-
-        rkt_tr_list = page_src.find_all("div", class_="rkt-tr")
-        for l in range(1, 11):
-            try:
-                nick_name = rkt_tr_list[l].find("span", class_="nik").get_text()
-                chr_dict["nick_name"].append(nick_name)
-
-                server = rkt_tr_list[l].find("span", class_="svname").get_text()
-                chr_dict["server"].append(server)
-
-            except:
-                print("Stop")
-                stop_idx = True
-
-        ## 다음페이지에 해당하는 버튼 누르기
-        next_page = driver.find_element_by_xpath(
-            '//*[@id="ranking"]/div[1]/div[5]/div[3]/div/ul/li[' + str(2 + j) + "]"
+for base_job in tqdm.tqdm(job_dict):
+    for job in job_dict[base_job]:
+        job_url = (
+            "https://dundam.xyz/damage_ranking?page=1&type=7&job="
+            + job
+            + "&baseJob="
+            + base_job
+            + "&weaponType=%EC%A0%84%EC%B2%B4&weaponDetail=%EC%A0%84%EC%B2%B4"
         )
-        next_page.click()
 
-        if stop_idx:
-            break
-    # 중간 저장
-    with open("DAT/" + base_job + "_" + job + "_info", "wb") as fp:
-        pickle.dump(chr_dict, fp)
+        driver.get(job_url)
 
-# 최종 저장
-with open("DAT/" + base_job + "_" + job + "_info", "wb") as fp:
-    pickle.dump(chr_dict, fp)
+        chr_dict = {"nick_name": [], "server": []}
+        stop_idx = False
+        while not stop_idx:
+            for j in range(1, 11):
+                time.sleep(1)
+
+                page_src = BeautifulSoup(driver.page_source)
+
+                rkt_tr_list = page_src.find_all("div", class_="rkt-tr")
+                for l in range(1, 11):
+                    try:
+                        nick_name = rkt_tr_list[l].find("span", class_="nik").get_text()
+                        chr_dict["nick_name"].append(nick_name)
+
+                        server = rkt_tr_list[l].find("span", class_="svname").get_text()
+                        chr_dict["server"].append(server)
+
+                    except:
+                        print("Stop")
+                        stop_idx = True
+
+                ## 다음페이지에 해당하는 버튼 누르기
+                next_page = driver.find_element_by_xpath(
+                    '//*[@id="ranking"]/div[1]/div[5]/div[3]/div/ul/li[' + str(2 + j) + "]"
+                )
+                next_page.click()
+
+                if stop_idx:
+                    break
+            # 중간 저장
+            with open("DAT/" + base_job + "_" + job + "_info", "wb") as fp:
+                pickle.dump(chr_dict, fp)
+
+        # 최종 저장
+        with open("DAT/" + base_job + "_" + job + "_info", "wb") as fp:
+            pickle.dump(chr_dict, fp)
