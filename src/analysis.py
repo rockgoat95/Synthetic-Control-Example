@@ -6,10 +6,12 @@ import matplotlib.pyplot as plt
 plt.rc('font', family='Malgun Gothic')
 
 data = pd.read_csv('DAT/job_pivot_table.csv').set_index('create_week')
-data.columns
+
 T0 = 202220
 T1_term = 3
+MSE_threshold = 80
 treated_jobs = ["마법사(여)_소환사", "도적_쿠노이치"]
+
 donor_pool = [job for job in data.columns if job not in treated_jobs]
 
 for i in range(len(treated_jobs)):
@@ -28,7 +30,7 @@ for i in range(len(treated_jobs)):
                                 data1 = data.loc[data.index>=T0,columns],
                                 col = treated,
                                 method = 'robust_l2')
-    robust_sc_model.svd_ploting()
+    # robust_sc_model.svd_ploting()
     rsc_y0, rsc_y1 = robust_sc_model.get(2)
 
 
