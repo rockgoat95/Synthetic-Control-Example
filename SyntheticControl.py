@@ -118,6 +118,7 @@ class SyntheticControl:
         res = np.linalg.svd(M)[1]
         
         plt.plot(np.arange(1, len(res)+1), res)
+        plt.title("values plot of SVD ")
         plt.show()
         
         return res
