@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.linear_model import Lasso, Ridge
+from sklearn.linear_model import Lasso, Ridge, LinearRegression
 from toolz import partial
 from scipy.optimize import fmin_slsqp
 import random
@@ -53,6 +53,22 @@ class SyntheticControl:
         self.W = weights
         synthetic_y0 = np.asarray(self.X0).dot(self.W)
         synthetic_y1 = np.asarray(self.X1).dot(self.W)
+        
+        return synthetic_y0, synthetic_y1    
+    
+    def _linear_control_SS(self):
+        '''
+        Synthetic Control with normal linear regression.
+        This method has a very high risk of overfitting and is designed for experiments.
+        '''
+        
+        lr_ss = LinearRegression(fit_intercept = False)
+        lr_ss.fit(self.X0, self.y0)
+            
+        self.W = np.array(lr_ss.coef_)
+        synthetic_y0 = np.asarray(self.X0).dot(self.W)
+        synthetic_y1 = np.asarray(self.X1).dot(self.W)
+        self._inv_scaling()
         
         return synthetic_y0, synthetic_y1    
     

@@ -3,9 +3,36 @@ import json
 import datetime
 import requests
 import time
+import matplotlib.pyplot as plt
+import pandas as pd
 
 api_url = "https://api.neople.co.kr/df/"
 
+def job_create_freq_plot(data, job_name, T0, save = False):
+    freq_series = data[job_name]
+    plt.plot(freq_series.index, freq_series)
+    plt.vlines(x = T0, ymax = freq_series.max(), ymin = 0, linestyles = '--', alpha = 0.5 )
+    plt.title('생성 빈도 - ' + job_name )
+    plt.xlabel('주차')
+    plt.ylabel('빈도수')
+    if save:
+        plt.savefig('plots/'+ job_name + '_생성빈도.png')
+    plt.show()
+
+def synthetic_plot(x, y, s_y, v_idx, label = ""):
+    plt.plot(x, s_y, label = 'Sythetic')
+    plt.plot(x, y, label = 'Real')
+    plt.vlines(x = v_idx, ymax = max([s_y.max(), y.max()]), ymin = min([s_y.min(), y.min()]),  linestyles = '--' )
+    plt.ylabel(label)
+    plt.legend()
+    plt.show()
+    return 
+
+def get_update_week(x):
+    res = x - datetime.timedelta(days=2)
+    res = list(res.date().isocalendar())
+    res = res[0] * 100 + res[1]
+    return res
 
 def get_chracter_creation_date(chr_name, server, server_name2id, api_key_val):
     try:
