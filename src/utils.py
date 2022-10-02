@@ -19,12 +19,14 @@ def job_create_freq_plot(data, job_name, T0, save = False):
         plt.savefig('plots/'+ job_name + '_생성빈도.png')
     plt.show()
 
-def synthetic_plot(x, y, s_y, v_idx, label = ""):
+def synthetic_plot(x, y, s_y, v_idx, title = "", job_name = None,  save = False):
     plt.plot(x, s_y, label = 'Sythetic')
     plt.plot(x, y, label = 'Real')
     plt.vlines(x = v_idx, ymax = max([s_y.max(), y.max()]), ymin = min([s_y.min(), y.min()]),  linestyles = '--' )
-    plt.ylabel(label)
+    plt.title(title)
     plt.legend()
+    if save:
+        plt.savefig('plots/Synthetic_'+ job_name + '.png')
     plt.show()
     return 
 

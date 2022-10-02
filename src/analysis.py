@@ -50,9 +50,9 @@ for i in range(len(treated_jobs)):
         plt.show()
         return 
 
-    synthetic_plot(data.index, data[treated], np.concatenate((sc_y0, sc_y1)) , v_idx = T0-0.5, label = treated + "의 주간 캐릭터 생성")
+    # synthetic_plot(data.index, data[treated], np.concatenate((sc_y0, sc_y1)) , v_idx = T0-0.5, label = treated + "의 주간 캐릭터 생성")
 
-    synthetic_plot(data.index, data[treated], np.concatenate((rsc_y0, rsc_y1)) , v_idx = T0-0.5, label = treated + "의 주간 캐릭터 생성")
+    synthetic_plot(data.index, data[treated], np.concatenate((rsc_y0, rsc_y1)) , v_idx = T0-0.5, job_name = treated, title = treated + "의 주간 캐릭터 생성")
 
     ymax = -10
     ymin = 10
@@ -88,11 +88,11 @@ for i in range(len(treated_jobs)):
         plt.plot(data.index, true_sc_diff, alpha = alpha, color = color)
         
     plt.vlines(x = T0-0.5, ymax = ymax, ymin = ymin, linestyles = '--', alpha = 0.5 )
-    plt.title('Treated v.s. Placebo')
+    plt.title('Treated v.s. Placebo - ' + treated)
+    plt.savefig('plots/with_placebo_'+treated + '.png')
     plt.show()
 
     after_treated = pd.Series(after_treated)
     after_treated.index = after_treated_names
-    empirical_ATE_sum.append()
     empirical_pvs.append(np.mean(after_treated >= after_treated[treated]) )
     ## bootstrap 결과를 통한 검정 추가 
