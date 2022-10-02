@@ -1,4 +1,6 @@
 .env
-DAT/
+chr_info/
+job_info/
+*.csv
 test.ipynb
 __pycache__/
