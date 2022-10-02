@@ -11,3 +11,9 @@ Causal Inference for the update of the job renewals.
 <img src="https://user-images.githubusercontent.com/37683366/193465582-f24efa85-0823-48b5-a21e-245399339a6f.png" width="80%" height="80%">
 <p>
 
+
+ATE of "마법사(여)_소환사" :244
+ATE of "도적_쿠노이치"     :54
+
+estimated p-value of "마법사(여)_소환사" :0.029
+estimated p-value of "도적_쿠노이치"     :0.029
