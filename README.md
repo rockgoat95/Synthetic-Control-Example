@@ -22,4 +22,4 @@ estimated p-value of "마법사(여)_소환사" :0.029
 estimated p-value of "도적_쿠노이치"     :0.029
 
 
-분석결과 : https://velog.io/@rockgoat2/Causal-Inference-Synthetic-Control-던전앤-파이터-직업-리뉴얼에-따른-캐릭터-생성효과-분석
+분석결과[https://velog.io/@rockgoat2/Causal-Inference-Synthetic-Control-던전앤-파이터-직업-리뉴얼에-따른-캐릭터-생성효과-분석]
